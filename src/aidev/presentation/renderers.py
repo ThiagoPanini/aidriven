@@ -4,6 +4,10 @@ from rich.text import Text
 from aidev.domain.models import InstalledResource, LockFile, Resource
 from aidev.presentation.console import console
 
+MAX_DESCRIPTION_DISPLAY_LENGTH = 80
+MAX_CONTENT_PREVIEW_LENGTH = 3000
+DATETIME_DISPLAY_LENGTH = 19  # Length of "YYYY-MM-DDTHH:MM:SS"
+
 
 def render_resource_table(resources: list[Resource]) -> None:
     if not resources:
@@ -17,7 +21,7 @@ def render_resource_table(resources: list[Resource]) -> None:
     table.add_column("Description")
 
     for r in resources:
-        table.add_row(r.slug, r.resource_type.value, r.name, r.description[:80])
+        table.add_row(r.slug, r.resource_type.value, r.name, r.description[:MAX_DESCRIPTION_DISPLAY_LENGTH])
 
     console.print(table)
 
@@ -32,7 +36,7 @@ def render_resource_detail(resource: Resource, content: str) -> None:
     )
     console.print(Panel(meta, title=f"[bold cyan]{resource.name}[/bold cyan]", expand=False))
 
-    preview = content[:3000] + ("..." if len(content) > 3000 else "")
+    preview = content[:MAX_CONTENT_PREVIEW_LENGTH] + ("..." if len(content) > MAX_CONTENT_PREVIEW_LENGTH else "")
     console.print(Panel(preview, title="[bold]Content Preview[/bold]"))
 
 
@@ -48,7 +52,7 @@ def render_installed_summary(installed: list[InstalledResource]) -> None:
     table.add_column("Target Path", style="dim")
 
     for r in installed:
-        table.add_row(r.slug, r.resource_type.value, r.installed_at[:19], r.target_path)
+        table.add_row(r.slug, r.resource_type.value, r.installed_at[:DATETIME_DISPLAY_LENGTH], r.target_path)
 
     console.print(table)
 

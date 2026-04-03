@@ -12,6 +12,9 @@ def _slug_to_name(slug: str) -> str:
     return slug.replace("-", " ").title()
 
 
+MAX_DESCRIPTION_LENGTH = 200
+
+
 def _read_description(path: Path) -> str:
     """Read first non-empty, non-heading line as description."""
     try:
@@ -19,7 +22,7 @@ def _read_description(path: Path) -> str:
             for line in f:
                 stripped = line.strip()
                 if stripped and not stripped.startswith("#"):
-                    return stripped[:200]
+                    return stripped[:MAX_DESCRIPTION_LENGTH]
     except OSError:
         pass
     return ""
