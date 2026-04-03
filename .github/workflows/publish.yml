@@ -1,0 +1,68 @@
+name: Publish
+
+# Triggers:
+#   1. A semver tag is pushed (v0.1.0, v1.2.3, v1.0.0-rc1, …) — recommended.
+#   2. A GitHub Release is published — alternative UI-driven path.
+#
+# This workflow uses PyPI Trusted Publishing (OIDC) — no stored API tokens.
+# MANUAL SETUP REQUIRED before first use; see docs/RELEASE.md.
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+-*"
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Build the distribution packages and upload as an artifact.
+  # ---------------------------------------------------------------------------
+  build:
+    name: Build Distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build sdist and wheel
+        run: uv build
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # Publish to PyPI via OIDC Trusted Publishing.
+  # Requires the "pypi" GitHub environment (see docs/RELEASE.md).
+  # ---------------------------------------------------------------------------
+  publish:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment: pypi        # GitHub environment gating (manual approval optional)
+    permissions:
+      id-token: write        # Required for OIDC token exchange with PyPI
+
+    steps:
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        # No api_token needed — OIDC handles auth transparently.
+        # Set repository_url to https://test.pypi.org/legacy/ for dry runs.
