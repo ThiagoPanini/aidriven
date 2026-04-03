@@ -27,7 +27,7 @@ def dir_exists(path: Path) -> bool:
     return path.exists() and path.is_dir()
 
 
-def compute_md5(path: Path) -> str:
+def compute_sha256(path: Path) -> str:
     h = hashlib.sha256()
     with open(path, "rb") as f:
         for chunk in iter(lambda: f.read(8192), b""):
