@@ -1,22 +1,31 @@
 ## Summary
 
-<!-- What does this PR do? Why? Keep it to 2–3 sentences. -->
+<!-- Describe the changes in this PR. What does it do? Why? -->
 
-## Changes
+## Type of change
 
-<!-- Bullet points of what changed. Be specific. -->
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Refactor / code cleanup
+- [ ] Documentation update
+- [ ] CI / tooling change
+- [ ] Breaking change (describe impact below)
 
--
+## Related issues
 
-## Testing
+<!-- Link any related issues: Closes #123, Fixes #456 -->
 
-<!-- Describe how this was tested. -->
+## Test plan
 
-- [ ] Tests added / updated
-- [ ] `uv run pytest` passes locally
-- [ ] `uv run ruff check .` passes
-- [ ] `uv run mypy src/` passes (when source is implemented)
+<!-- How was this tested? What scenarios were covered? -->
 
-## Related Issues
+- [ ] Existing tests pass
+- [ ] New tests added for the change
+- [ ] Manually tested (describe below)
 
-<!-- Closes #<issue number> or N/A -->
+## Checklist
+
+- [ ] Code follows the project style guidelines
+- [ ] Self-reviewed the diff
+- [ ] Updated documentation if applicable
+- [ ] No new warnings introduced

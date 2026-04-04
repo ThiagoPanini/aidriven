@@ -1,29 +1,19 @@
 version: 2
-
 updates:
-  # Python dependencies (reads pyproject.toml via pip ecosystem)
+  # Keep Python dependencies up to date
   - package-ecosystem: pip
-    directory: /
+    directory: "/"
     schedule:
       interval: weekly
-      day: monday
+    open-pull-requests-limit: 5
     groups:
       dev-dependencies:
-        dependency-type: development
-        patterns: ["*"]
-    labels:
-      - dependencies
-    commit-message:
-      prefix: "chore(deps)"
+        patterns:
+          - "*"
 
-  # GitHub Actions (pins action versions)
+  # Keep GitHub Actions up to date
   - package-ecosystem: github-actions
-    directory: /
+    directory: "/"
     schedule:
       interval: weekly
-      day: monday
-    labels:
-      - dependencies
-      - github-actions
-    commit-message:
-      prefix: "chore(actions)"
+    open-pull-requests-limit: 5

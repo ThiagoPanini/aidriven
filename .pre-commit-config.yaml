@@ -1,17 +1,6 @@
-repos:
-  # ---------------------------------------------------------------------------
-  # Ruff — linting + formatting (replaces flake8, black, isort)
-  # ---------------------------------------------------------------------------
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.9
-    hooks:
-      - id: ruff
-        args: [--fix]
-      - id: ruff-format
+exclude: ^\.claude/skills/skill-creator/
 
-  # ---------------------------------------------------------------------------
-  # Standard file hygiene checks
-  # ---------------------------------------------------------------------------
+repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
@@ -22,22 +11,20 @@ repos:
       - id: check-json
       - id: check-merge-conflict
       - id: check-added-large-files
-        args: [--maxkb=500]
       - id: detect-private-key
-      # Prevent accidental direct commits to main; remove if working solo
-      - id: no-commit-to-branch
-        args: [--branch, main]
+      - id: mixed-line-ending
 
-  # ---------------------------------------------------------------------------
-  # mypy — static type checking
-  # Must list runtime dependencies so mypy can resolve imports in its
-  # isolated pre-commit environment.
-  # ---------------------------------------------------------------------------
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.9
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+      - id: ruff-format
+
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.0
+    rev: v1.14.1
     hooks:
       - id: mypy
-        args: [--strict]
+        args: ["--config-file=pyproject.toml"]
         additional_dependencies:
-          - typer>=0.12
-          - rich>=13.0
+          - types-requests
