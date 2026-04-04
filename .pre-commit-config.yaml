@@ -1,4 +1,4 @@
-exclude: ^\.claude/skills/skill-creator/
+exclude: skills/skill-creator
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
