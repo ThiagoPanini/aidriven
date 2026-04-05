@@ -36,7 +36,14 @@ dev = [
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-exclude = ["*/skills/skill-creator"]
+exclude = [
+  ".claude",
+  ".copilot",
+  ".specify",
+  ".github",
+  ".vscode",
+  "*/skills/skill-creator",
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP", "B", "N", "SIM", "TCH", "PT", "RUF"]
@@ -54,7 +61,7 @@ python_version = "3.11"
 strict = true
 warn_return_any = true
 warn_unused_configs = true
-exclude = ["build/", "dist/"]
+exclude = ["build/", "dist/", "^\\.claude/", "^\\.copilot/", "^\\.specify/", "^\\.github/", "^\\.vscode/"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
