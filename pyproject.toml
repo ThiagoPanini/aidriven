@@ -63,6 +63,10 @@ warn_return_any = true
 warn_unused_configs = true
 exclude = ["build/", "dist/", "^\\.claude/", "^\\.copilot/", "^\\.specify/", "^\\.github/", "^\\.vscode/"]
 
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_decorators = false
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --tb=short --cov=src --cov-report=term-missing"
