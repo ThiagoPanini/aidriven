@@ -36,7 +36,8 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             TAG="${{ github.event.inputs.version }}"
           else
-            TAG="${{ github.event.pull_request.head.ref }}"
+            BRANCH="${{ github.event.pull_request.head.ref }}"
+            TAG="${BRANCH%%/*}"
           fi
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
