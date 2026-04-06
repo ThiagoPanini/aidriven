@@ -61,6 +61,7 @@ python_version = "3.11"
 strict = true
 warn_return_any = true
 warn_unused_configs = true
+mypy_path = "src"
 exclude = ["build/", "dist/", "^\\.claude/", "^\\.copilot/", "^\\.specify/", "^\\.github/", "^\\.vscode/"]
 
 [[tool.mypy.overrides]]
