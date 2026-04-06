@@ -1,43 +1,83 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
-name = "aidev"
-version = "0.1.0"
-description = "AI development resources manager"
+name = "aidriven"
+description = "A python CLI tool that helps developers to get and install useful AI resources"
 readme = "README.md"
-requires-python = ">=3.11"
-dependencies = [
-    "typer>=0.12",
-    "rich>=13.0",
-]
+license = { text = "MIT" }
+authors = [{ name = "Thiago Panini", email = "panini.development@gmail.com" }]
+requires-python = ">= 3.11"
+dynamic = ["version"]
+dependencies = []
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-    "pytest-mock",
-    "ruff",
-    "mypy",
-]
+[project.urls]
+Homepage = "https://github.com/ThiagoPanini/aidriven"
+Repository = "https://github.com/ThiagoPanini/aidriven"
+Issues = "https://github.com/ThiagoPanini/aidriven/issues"
 
-[project.scripts]
-aidev = "aidev.cli:app"
+[tool.hatch.version]
+source = "vcs"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/aidev"]
+packages = ["src/aidriven"]
+
+[dependency-groups]
+dev = [
+  "pytest>=8.0",
+  "pytest-cov>=5.0",
+  "mypy>=1.0",
+  "ruff>=0.9.0",
+  "mkdocs-material>=9.0",
+  "pre-commit>=3.0",
+]
 
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+exclude = [
+  ".claude",
+  ".copilot",
+  ".specify",
+  ".github",
+  ".vscode",
+  "*/skills/skill-creator",
+]
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+select = ["E", "F", "I", "W", "UP", "B", "N", "SIM", "TCH", "PT", "RUF"]
+ignore = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["aidriven"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [tool.mypy]
-python_version = "3.11"
-strict = false
+python_version = "3.14"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+mypy_path = "src"
+exclude = ["build/", "dist/", "^\\.claude/", "^\\.copilot/", "^\\.specify/", "^\\.github/", "^\\.vscode/"]
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_decorators = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+addopts = "-v --tb=short --cov=src --cov-report=term-missing"
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+omit = ["*/tests/*", "*/__init__.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+fail_under = 0
