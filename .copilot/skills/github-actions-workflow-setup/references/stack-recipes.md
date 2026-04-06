@@ -25,10 +25,10 @@ the recipe defaults.
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
   with:
     fetch-depth: 0              # only if version tags needed
-- uses: astral-sh/setup-uv@v5
+- uses: astral-sh/setup-uv@v7
   with:
     enable-cache: true
     python-version: ${{ matrix.python-version }}    # or a fixed version
@@ -59,7 +59,7 @@ strategy:
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 - uses: actions/setup-python@v5
   with:
     python-version: ${{ matrix.python-version }}
@@ -82,7 +82,7 @@ Commands:
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 - uses: actions/setup-python@v5
   with:
     python-version: ${{ matrix.python-version }}
@@ -105,7 +105,7 @@ Commands:
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 - uses: actions/setup-python@v5
   with:
     python-version: ${{ matrix.python-version }}
@@ -128,7 +128,7 @@ Commands:
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 - uses: actions/setup-python@v5
   with:
     python-version: ${{ matrix.python-version }}
@@ -162,10 +162,10 @@ jobs:
       name: pypi
       url: https://pypi.org/p/<package-name>
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v7
       - run: uv build
       - uses: pypa/gh-action-pypi-publish@release/v1
 ```
@@ -203,7 +203,7 @@ Or with uv:
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 - uses: actions/setup-node@v4
   with:
     node-version: ${{ matrix.node-version }}
@@ -234,7 +234,7 @@ strategy:
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 - uses: pnpm/action-setup@v4
 - uses: actions/setup-node@v4
   with:
@@ -257,7 +257,7 @@ Commands:
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 - uses: actions/setup-node@v4
   with:
     node-version: ${{ matrix.node-version }}
@@ -278,7 +278,7 @@ Commands:
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 - uses: oven-sh/setup-bun@v2
   with:
     bun-version: latest
@@ -298,7 +298,7 @@ Commands:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
   - uses: actions/setup-node@v4
     with:
       node-version: '22'
@@ -317,7 +317,7 @@ steps:
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 - uses: actions/setup-go@v5
   with:
     go-version: ${{ matrix.go-version }}
@@ -364,7 +364,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: actions/setup-go@v5
@@ -385,7 +385,7 @@ jobs:
 
 Setup:
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 - uses: actions-rust-lang/setup-rust-toolchain@v1
   with:
     toolchain: stable
@@ -425,7 +425,7 @@ jobs:
             os: windows-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: stable
@@ -452,7 +452,7 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: docker/setup-buildx-action@v3
 
@@ -511,8 +511,8 @@ jobs:
     name: Backend (Python)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
       - run: uv sync
@@ -522,7 +522,7 @@ jobs:
     name: Frontend (Node.js)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
           node-version: '22'

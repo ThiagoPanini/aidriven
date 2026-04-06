@@ -2,7 +2,7 @@
 
 Current stable versions of commonly used GitHub Actions. Always pin to these major version tags.
 
-Last reviewed: 2025-05
+Last reviewed: 2026-04
 
 ---
 
@@ -23,7 +23,7 @@ Last reviewed: 2025-05
 
 | Action | Version | Purpose |
 |---|---|---|
-| `actions/checkout` | `v4` | Check out repository code |
+| `actions/checkout` | `v6` | Check out repository code |
 | `actions/cache` | `v4` | Cache dependencies and build outputs |
 | `actions/upload-artifact` | `v4` | Upload build artifacts |
 | `actions/download-artifact` | `v4` | Download build artifacts |
@@ -31,7 +31,7 @@ Last reviewed: 2025-05
 ### actions/checkout
 
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
   with:
     fetch-depth: 0          # only when git history is needed (version tags, changelog)
     # fetch-depth: 1        # default — shallow clone, faster
@@ -130,14 +130,14 @@ steps:
 
 | Action | Version | Package Manager |
 |---|---|---|
-| `astral-sh/setup-uv` | `v5` | uv (Python) |
+| `astral-sh/setup-uv` | `v7` | uv (Python) |
 | `pnpm/action-setup` | `v4` | pnpm (Node.js) |
 | `oven-sh/setup-bun` | `v2` | Bun (JS/TS) |
 
 ### uv
 
 ```yaml
-- uses: astral-sh/setup-uv@v5
+- uses: astral-sh/setup-uv@v7
   with:
     enable-cache: true
     # python-version: '3.12'  # optional, can also use matrix variable
@@ -145,7 +145,7 @@ steps:
 
 With matrix:
 ```yaml
-- uses: astral-sh/setup-uv@v5
+- uses: astral-sh/setup-uv@v7
   with:
     enable-cache: true
     python-version: ${{ matrix.python-version }}
@@ -231,10 +231,10 @@ jobs:
       name: pypi
       url: https://pypi.org/p/<package-name>
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v7
       - run: uv build
       - uses: pypa/gh-action-pypi-publish@release/v1
 ```
@@ -243,7 +243,7 @@ jobs:
 
 ```yaml
 steps:
-  - uses: actions/checkout@v4
+  - uses: actions/checkout@v6
   - uses: actions/setup-node@v4
     with:
       node-version: '22'
@@ -294,7 +294,7 @@ jobs:
   dependency-review:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/dependency-review-action@v4
 ```
 
@@ -329,12 +329,14 @@ Avoid these — they are outdated or have better replacements:
 
 | Deprecated | Replacement |
 |---|---|
-| `actions/checkout@v3` | `actions/checkout@v4` |
-| `actions/checkout@v2` | `actions/checkout@v4` |
+| `actions/checkout@v4` | `actions/checkout@v6` |
+| `actions/checkout@v3` | `actions/checkout@v6` |
+| `actions/checkout@v2` | `actions/checkout@v6` |
 | `actions/setup-python@v4` | `actions/setup-python@v5` |
 | `actions/setup-node@v3` | `actions/setup-node@v4` |
 | `actions/cache@v3` | `actions/cache@v4` (or built-in caching in setup actions) |
 | `actions/upload-artifact@v3` | `actions/upload-artifact@v4` |
+| `astral-sh/setup-uv@v5` | `astral-sh/setup-uv@v7` |
 | `docker/build-push-action@v5` | `docker/build-push-action@v6` |
 | `ubuntu-18.04` runner | `ubuntu-latest` or `ubuntu-24.04` |
 | `ubuntu-20.04` runner | `ubuntu-latest` or `ubuntu-24.04` |
