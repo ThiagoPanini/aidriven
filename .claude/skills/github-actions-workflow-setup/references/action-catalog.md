@@ -266,6 +266,65 @@ steps:
 
 ---
 
+## Coverage
+
+| Action | Version | Purpose |
+|---|---|---|
+| `codecov/codecov-action` | `v5` | Upload coverage reports to Codecov |
+
+### Codecov
+
+```yaml
+- uses: codecov/codecov-action@v5
+  with:
+    token: ${{ secrets.CODECOV_TOKEN }}
+    files: coverage.xml             # explicit path — avoids auto-detection surprises
+    flags: <flag-name>              # e.g. python-${{ matrix.python-version }}
+    fail_ci_if_error: true          # set false if Codecov outages should not block CI
+```
+
+Key inputs:
+
+| Input | Default | Notes |
+|---|---|---|
+| `token` | — | Required for private repos; recommended for public repos to avoid rate limits |
+| `files` | auto-detect | Explicit is better — set to `coverage.xml` (Python), `coverage/lcov.info` (JS), etc. |
+| `flags` | — | Tags the upload (useful with matrix builds). Codecov merges flagged uploads automatically |
+| `fail_ci_if_error` | `false` | Set `true` for strict CI; set `false` if Codecov availability should not gate merges |
+| `name` | — | Human-readable label for the upload (optional) |
+
+Configuration file: place `.github/codecov.yml` or `codecov.yml` at repo root. Example:
+
+```yaml
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        target: 80%
+  ignore:
+    - "tests/"
+    - "**/__init__.py"
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default
+
+flag_management:
+  default_rules:
+    carryforward: true    # carry forward when a matrix flag is missing
+```
+
+> **Cross-cutting concern:** Codecov requires an XML (or lcov) report file. This means
+> the project's test/coverage config (`pyproject.toml`, `jest.config`, etc.) must include
+> `--cov-report=xml` or equivalent. Note this to the user but do not modify those files —
+> they are outside this skill's scope.
+
+---
+
 ## Security
 
 | Action | Version | Purpose |

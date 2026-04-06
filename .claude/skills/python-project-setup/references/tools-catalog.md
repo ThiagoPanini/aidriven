@@ -305,10 +305,16 @@ show_missing = true
 skip_covered = false
 fail_under = 0  # raise this as tests are added
 ```
-Add `--cov=src --cov-report=term-missing` to `[tool.pytest.ini_options] addopts`.
+Add `--cov=src --cov-report=term-missing --cov-report=xml` to `[tool.pytest.ini_options] addopts`.
+
+> The `--cov-report=xml` flag writes `coverage.xml`, which CI coverage services (Codecov,
+> Coveralls, Code Climate, SonarQube) require. Including it by default makes the project
+> CI-ready without extra configuration. The file is already excluded by the standard
+> `.gitignore` template.
 
 ### `coverage`
 Same `[tool.coverage.*]` config as above. Run separately with `coverage run -m pytest && coverage report`.
+For CI-ready XML output, also run `coverage xml` after `coverage report`.
 
 ---
 

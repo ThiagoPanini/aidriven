@@ -1,0 +1,33 @@
+# Codecov configuration
+# https://docs.codecov.com/docs/codecovyml-reference
+
+coverage:
+  status:
+    project:
+      default:
+        # "auto" compares against the previous build's coverage
+        target: auto
+        # Allow up to 1% drop before marking the commit as failed
+        threshold: 1%
+    patch:
+      default:
+        # New/changed lines must be covered at this minimum threshold
+        target: 80%
+        threshold: 5%
+
+  # Paths excluded from coverage analysis
+  ignore:
+    - "tests/"
+    - "**/__init__.py"
+
+# Pull-request comment layout
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default
+  require_changes: false
+
+# Flag management — carry forward coverage when a matrix flag is missing
+# (e.g. if Python 3.14 job is skipped on a patch build)
+flag_management:
+  default_rules:
+    carryforward: true

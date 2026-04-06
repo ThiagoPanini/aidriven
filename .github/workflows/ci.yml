@@ -73,7 +73,15 @@ jobs:
         run: uv sync
 
       - name: Run tests
-        run: uv run pytest --cov=src --cov-report=term-missing
+        run: uv run pytest
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          flags: python-${{ matrix.python-version }}
+          fail_ci_if_error: true
 
   open-pr:
     name: Open Release PR
@@ -83,8 +91,20 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      models: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure release label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create "release" \
+            --color "0075ca" \
+            --description "Automated release version" \
+            --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
 
       - name: Create PR to main
         env:
@@ -106,11 +126,34 @@ jobs:
             exit 0
           fi
 
-          printf "## Release %s\n\nAutomated release PR from branch \`%s\`.\n\nAll CI checks passed — merge to publish \`%s\` to PyPI.\n\n## Checklist\n\n- [ ] CHANGELOG updated\n- [ ] Version bump reviewed\n- [ ] Ready to publish\n" \
-            "$VERSION" "$BRANCH" "$VERSION" > /tmp/pr_body.md
+          # Gather commits since main to provide context for AI description
+          COMMITS=$(git log origin/main..HEAD --oneline --no-merges 2>/dev/null | head -20 || echo "")
+
+          # Generate description via GitHub Models API (gpt-4o-mini)
+          GENERATED_DESC=""
+          if [ -n "$COMMITS" ]; then
+            PROMPT="Write a 2-3 sentence GitHub pull request description for release $VERSION of aidriven, a Python library for AI-driven IDE discovery. Be factual and concise based on these commits:\n$COMMITS"
+            GENERATED_DESC=$(curl -s -m 15 -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Content-Type: application/json" \
+              "https://models.inference.ai.azure.com/chat/completions" \
+              --data "$(jq -n --arg p "$PROMPT" \
+                '{model:"gpt-4o-mini",messages:[{role:"user",content:$p}],max_tokens:200}')" \
+              | jq -r '.choices[0].message.content // empty' 2>/dev/null || echo "")
+          fi
+
+          # Build PR body — use AI description when available, fall back to template
+          if [ -n "$GENERATED_DESC" ]; then
+            printf "## Summary\n\n%s\n\n---\n\n## Release %s\n\nAutomated release PR from branch \`%s\`.\n\nAll CI checks passed — merge to publish \`%s\` to PyPI.\n\n## Checklist\n\n- [ ] CHANGELOG updated\n- [ ] Version bump reviewed\n- [ ] Ready to publish\n" \
+              "$GENERATED_DESC" "$VERSION" "$BRANCH" "$VERSION" > /tmp/pr_body.md
+          else
+            printf "## Release %s\n\nAutomated release PR from branch \`%s\`.\n\nAll CI checks passed — merge to publish \`%s\` to PyPI.\n\n## Checklist\n\n- [ ] CHANGELOG updated\n- [ ] Version bump reviewed\n- [ ] Ready to publish\n" \
+              "$VERSION" "$BRANCH" "$VERSION" > /tmp/pr_body.md
+          fi
 
           gh pr create \
             --base main \
             --head "$BRANCH" \
             --title "Release $VERSION" \
-            --body-file /tmp/pr_body.md
+            --body-file /tmp/pr_body.md \
+            --label "release"
