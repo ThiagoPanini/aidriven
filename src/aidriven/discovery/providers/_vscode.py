@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 from typing import NamedTuple
 
@@ -91,18 +92,40 @@ def _detect_version(binary_name: str, install_dir: Path | None) -> str | None:
             except (OSError, ValueError, KeyError):
                 pass
 
-    binary = shutil.which(binary_name)
+    # Prefer the CLI wrapper in install_dir/bin/ to avoid launching the GUI on Windows
+    binary: str | None = None
+    if install_dir is not None and _safe_is_dir(install_dir / "bin"):
+        for candidate_name in [f"{binary_name}.cmd", binary_name]:
+            bin_path = install_dir / "bin" / candidate_name
+            if _safe_exists(bin_path):
+                binary = str(bin_path)
+                break
+    if binary is None:
+        binary = shutil.which(binary_name)
     if binary is None:
         return None
     try:
-        result = subprocess.run(
-            [binary, "--version"],
-            capture_output=True,
-            text=True,
-            timeout=_TIMEOUT,
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip().splitlines()[0]
+        if sys.platform == "win32":
+            si = subprocess.STARTUPINFO()
+            si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            si.wShowWindow = 0  # SW_HIDE
+            proc = subprocess.run(
+                [binary, "--version"],
+                capture_output=True,
+                text=True,
+                timeout=_TIMEOUT,
+                startupinfo=si,
+                creationflags=subprocess.CREATE_NO_WINDOW,
+            )
+        else:
+            proc = subprocess.run(
+                [binary, "--version"],
+                capture_output=True,
+                text=True,
+                timeout=_TIMEOUT,
+            )
+        if proc.returncode == 0 and proc.stdout.strip():
+            return proc.stdout.strip().splitlines()[0]
     except (OSError, subprocess.TimeoutExpired):
         pass
     return None
