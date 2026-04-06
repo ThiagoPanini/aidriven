@@ -45,7 +45,22 @@ Commands:
 | Type check (pyright) | `uv run pyright` |
 | Test | `uv run pytest` |
 | Test with coverage | `uv run pytest --cov=src --cov-report=term-missing` |
+| Test with XML report | `uv run pytest --cov=src --cov-report=term-missing --cov-report=xml` |
 | Build | `uv build` |
+
+Coverage upload (Codecov) — add after the test step:
+```yaml
+- name: Upload coverage to Codecov
+  uses: codecov/codecov-action@v5
+  with:
+    token: ${{ secrets.CODECOV_TOKEN }}
+    files: coverage.xml
+    flags: python-${{ matrix.python-version }}
+    fail_ci_if_error: true
+```
+
+> Requires `--cov-report=xml` in pytest addopts or the test command. The project's
+> `pyproject.toml` / `setup.cfg` must produce `coverage.xml`.
 
 Matrix dimensions:
 ```yaml
@@ -76,6 +91,7 @@ Commands:
 | Type check (mypy) | `mypy src/` |
 | Test | `pytest` |
 | Test with coverage | `pytest --cov=src --cov-report=term-missing` |
+| Test with XML report | `pytest --cov=src --cov-report=term-missing --cov-report=xml` |
 | Build | `python -m build` |
 
 ### Python + poetry
@@ -99,6 +115,7 @@ Commands:
 | Format check | `poetry run ruff format --check .` |
 | Type check | `poetry run mypy src/` |
 | Test | `poetry run pytest` |
+| Test with XML report | `poetry run pytest --cov=src --cov-report=term-missing --cov-report=xml` |
 | Build | `poetry build` |
 
 ### Python + pdm
@@ -122,6 +139,7 @@ Commands:
 | Format check | `pdm run ruff format --check .` |
 | Type check | `pdm run mypy src/` |
 | Test | `pdm run pytest` |
+| Test with XML report | `pdm run pytest --cov=src --cov-report=term-missing --cov-report=xml` |
 | Build | `pdm build` |
 
 ### Python + hatch
