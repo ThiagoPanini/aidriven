@@ -359,7 +359,7 @@ Most setup actions now support built-in caching. Prefer this over manual `action
     cache: 'pip'
 
 # Python with uv
-- uses: astral-sh/setup-uv@v5
+- uses: astral-sh/setup-uv@v7
   with:
     enable-cache: true
 
@@ -464,7 +464,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ inputs.python-version }}
@@ -508,7 +508,7 @@ Do NOT use reusable workflows when:
 - uses: actions/checkout@main
 
 # GOOD
-- uses: actions/checkout@v4
+- uses: actions/checkout@v6
 ```
 
 ### Do not use `set-output` (deprecated)

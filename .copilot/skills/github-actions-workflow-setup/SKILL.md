@@ -139,7 +139,7 @@ Every file gets exactly one disposition:
    reasonable, keep them.
 4. **Modernize action versions** — always update to the latest stable major version. See
    `references/action-catalog.md` for current versions.
-5. **Prefer explicit over magic** — use specific action versions (`@v4`) not `@latest` or `@main`.
+5. **Prefer explicit over magic** — use specific action versions (`@v6`) not `@latest` or `@main`.
 6. **Consolidate vs. separate** — when the user requests both `lint` and `test` and no existing
    workflows cover them, ask whether they want separate files or a combined `ci.yml`. Default to
    the user's stated `workflow_style` preference.
@@ -152,7 +152,7 @@ Before generating any files, present the plan as a concise summary:
 
 > **Workflow plan:**
 > - `ci.yml` — **create** (lint + test + typecheck, triggers: push/PR to main)
-> - `publish.yml` — **update** (upgrade actions/checkout to v4, add OIDC publishing)
+> - `publish.yml` — **update** (upgrade actions/checkout to v6, add OIDC publishing)
 > - `release.yml` — **preserve** (already up to date)
 >
 > Proceed?
@@ -188,7 +188,7 @@ jobs:
     name: <Human-readable name>
     runs-on: <runner>
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       # ... remaining steps
 ```
 
@@ -198,7 +198,7 @@ jobs:
    `id-token: write` for OIDC publishing, `contents: write` for releases).
 2. **Always set `concurrency`** — cancel in-progress runs for CI workflows. For deploy/release
    workflows, use `cancel-in-progress: false` to avoid interrupting active deployments.
-3. **Always pin action versions** to major tags (`@v4`, `@v5`). See `references/action-catalog.md`.
+3. **Always pin action versions** to major tags (`@v6`, `@v7`). See `references/action-catalog.md`.
 4. **Always use `actions/checkout`** as the first step.
 5. **Use `fetch-depth: 0`** when the workflow needs git history (version computation from tags,
    changelog generation, etc.). Otherwise omit it (defaults to shallow clone, which is faster).
@@ -234,7 +234,7 @@ jobs:
     name: Lint & Format
     runs-on: <runner>
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - # stack-specific setup
       - # install dependencies
       - # run linter
@@ -252,7 +252,7 @@ jobs:
       matrix:
         <dimension>: [<values>]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - # stack-specific setup with matrix variable
       - # install dependencies
       - # run tests with coverage
@@ -265,7 +265,7 @@ jobs:
     name: Type Check
     runs-on: <runner>
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - # stack-specific setup
       - # install dependencies
       - # run type checker
@@ -278,7 +278,7 @@ jobs:
     name: Build
     runs-on: <runner>
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - # stack-specific setup
       - # install dependencies
       - # build command
@@ -302,7 +302,7 @@ jobs:
       name: <environment>
       url: <registry-url>
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - # stack-specific setup
       - # build
       - # publish (prefer OIDC over stored tokens)
@@ -322,7 +322,7 @@ jobs:
       name: <environment>
       url: <deploy-url>
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - # build or download artifact
       - # deploy command
 ```
@@ -340,7 +340,7 @@ jobs:
     name: Security Scan
     runs-on: <runner>
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - # dependency audit command
       - # optional: CodeQL or other SAST
 ```
@@ -382,7 +382,7 @@ jobs:
     name: Create Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - # optional: generate changelog
@@ -449,7 +449,7 @@ After generating all workflow files, verify each one:
 - [ ] `concurrency:` block is present (with appropriate `cancel-in-progress` setting)
 - [ ] All actions are pinned to a major version tag (not `@latest` or `@main`)
 - [ ] All action versions are current (see `references/action-catalog.md`)
-- [ ] `actions/checkout@v4` is the first step in every job
+- [ ] `actions/checkout@v6` is the first step in every job
 - [ ] `fetch-depth: 0` is present only when git history is needed
 - [ ] Caching is enabled for the package manager where available
 - [ ] Matrix strategy uses `fail-fast: false` (if matrix is present)
@@ -486,6 +486,14 @@ Required setup:
   - GitHub environment "pypi" with PyPI trusted publisher configured
   - Secret DEPLOY_KEY in repository settings (used by deploy.yml)
 ```
+
+> **Dependabot and secrets:** GitHub does not expose repository secrets (`secrets.*`) to
+> workflows triggered by Dependabot PRs. Any step that depends on a secret (e.g., Codecov
+> token upload) will fail on Dependabot PRs. When generating workflows:
+> - Use `fail_ci_if_error: false` on Codecov and similar optional upload steps
+> - Never gate CI pass/fail on steps that require secrets unavailable to Dependabot
+> - If a secret is strictly required for Dependabot PRs, instruct the user to add it
+>   under *Settings → Secrets → Dependabot secrets* separately
 
 ### Next Steps
 
