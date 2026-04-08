@@ -2,6 +2,7 @@
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-04-06
+**Updated**: 2026-04-07
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -31,4 +32,6 @@
 
 ## Notes
 
+- Updated 2026-04-07: Spec revised to use AI target (`--ai`) as primary installation selector instead of IDE detection.
+- Canonical placement paths defined for claude × copilot × project/user scope combinations.
 - All items pass. Spec is ready for `/speckit.plan`.
