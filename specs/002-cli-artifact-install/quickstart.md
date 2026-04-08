@@ -47,7 +47,7 @@ aidriven install skill code-reviewer --ai claude --scope user
 Expected:
 - `~/.agents/skills/code-reviewer/` populated.
 - `~/.claude/skills/code-reviewer` is a symlink to it.
-- The state is recorded in `~/.cache/aidriven/install-records.json`, **not** in the project lockfile.
+- The state is recorded in the user lockfile (`~/.cache/aidriven/install-records.json` on Linux/macOS; `%LOCALAPPDATA%\aidriven\install-records.json` on Windows), **not** in the project lockfile.
 
 ---
 

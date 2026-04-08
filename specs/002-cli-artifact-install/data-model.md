@@ -62,7 +62,7 @@ The `aidriven.install._targets.TARGETS` dict is the single registry. Adding a ta
 | `name` | `str` | Skill name; matches `^[a-z][a-z0-9-]{0,63}$` |
 | `type` | `ArtifactType` | `SKILL` in v1 |
 | `path_in_repo` | `str` | Relative path within the `aidriven-resources` repo (e.g. `skills/code-reviewer`) |
-| `archive_sha256` | `str` | SHA-256 of the *full repository tarball* at the resolved commit (FR-024) |
+| `content_hash` | `str` | SHA-256 computed from sorted file contents of the skill directory — same algorithm as `computedHash` in the lockfile. Verified by the CLI against extracted files post-extraction (FR-024). Independent of tarball byte-stability. |
 | `compatible_targets` | `frozenset[str]` | AI targets the skill officially supports (FR-021) |
 | `description` | `str` | Human-readable summary |
 
@@ -70,7 +70,7 @@ The `aidriven.install._targets.TARGETS` dict is the single registry. Adding a ta
 | Field | Type | Notes |
 |-------|------|-------|
 | `schema_version` | `int` | Currently `1`; FR-022 |
-| `source_commit_sha` | `str` | The commit SHA the manifest was fetched at; mirrors what the lockfile records |
+| `source_commit_sha` | `str` | The commit SHA the manifest was fetched at. **Not present in the JSON payload** — injected by `_manifest.py` from the runtime-resolved SHA (FR-022b). Stored here so callers always have manifest + SHA as a unit. |
 | `entries` | `Mapping[tuple[ArtifactType, str], ManifestEntry]` | Keyed by `(type, name)` |
 
 ### `ProjectContext`  *(frozen)*
@@ -207,7 +207,7 @@ read_path ──┤
 | `Scope.PROJECT` resolution | FR-005a, Clarification Q (scope resolution) |
 | `Manifest`, `ManifestEntry` | FR-019, FR-020, FR-021, FR-022, FR-022a |
 | `source_commit_sha` resolution | FR-022b |
-| `archive_sha256` integrity check | FR-024 |
+| `content_hash` integrity check (post-extraction) | FR-024 |
 | `InstallMode` and path tables | FR-008, FR-008a, FR-008b, FR-009 |
 | Idempotency hash | FR-030 |
 | Foreign-file conflict | FR-031 |
