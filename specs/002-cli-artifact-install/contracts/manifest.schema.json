@@ -36,7 +36,7 @@
   "$defs": {
     "skillEntry": {
       "type": "object",
-      "required": ["pathInRepo", "archiveSha256", "compatibleTargets"],
+      "required": ["pathInRepo", "contentHash", "compatibleTargets"],
       "additionalProperties": false,
       "properties": {
         "pathInRepo": {
@@ -44,9 +44,9 @@
           "description": "Relative path within aidriven-resources to the skill directory (e.g. 'skills/code-reviewer'). Forward slashes only. MUST NOT contain '..' segments.",
           "pattern": "^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)*$"
         },
-        "archiveSha256": {
+        "contentHash": {
           "type": "string",
-          "description": "Hex SHA-256 of the full repository tarball at the resolved commit SHA. The CLI verifies the downloaded tarball against this value (FR-024).",
+          "description": "Hex SHA-256 computed from all skill file contents sorted by relative path (same algorithm as computedHash in the lockfile). The CLI verifies extracted files against this value after extraction (FR-024). Avoids dependency on tarball byte-stability across GitHub regenerations.",
           "pattern": "^[a-f0-9]{64}$"
         },
         "compatibleTargets": {
