@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/thiagoml/aidriven/specs/002-cli-artifact-install/contracts/lockfile.schema.json",
+  "title": "aidriven-lock.json",
+  "description": "Schema for the project-scope and user-scope lockfile (FR-032, SC-009). The project lockfile MUST NOT include timestamps; the user lockfile MAY.",
+  "type": "object",
+  "required": ["version", "skills"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Lockfile schema version. Migrations on bump MUST preserve data or warn — never silently discard entries."
+    },
+    "skills": {
+      "type": "object",
+      "description": "Skills keyed by name. Serialized with sorted keys for deterministic VCS diffs.",
+      "patternProperties": {
+        "^[a-z][a-z0-9-]{0,63}$": { "$ref": "#/$defs/lockEntry" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "lockEntry": {
+      "type": "object",
+      "required": ["source", "sourceCommitSha", "computedHash", "targets", "scope", "installMode"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string",
+          "const": "aidriven-resources",
+          "description": "Source repository identifier. v1 only supports the trusted source."
+        },
+        "sourceCommitSha": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$",
+          "description": "Full 40-char commit SHA the files were fetched from."
+        },
+        "computedHash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "SHA-256 of all installed file contents sorted by relative path (FR-030)."
+        },
+        "targets": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["claude", "copilot"] },
+          "uniqueItems": true,
+          "minItems": 1,
+          "description": "AI targets this skill is installed for. MUST be sorted alphabetically for determinism."
+        },
+        "scope": { "type": "string", "enum": ["project", "user"] },
+        "installMode": { "type": "string", "enum": ["symlink", "copy"] },
+        "lastInstalledAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Optional. Allowed in the user lockfile only. The project lockfile MUST omit this field."
+        }
+      }
+    }
+  }
+}

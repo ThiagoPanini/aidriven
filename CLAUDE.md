@@ -1,8 +1,10 @@
 # aidriven Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-04-05
+Auto-generated from all feature plans. Last updated: 2026-04-07
 
 ## Active Technologies
+- Python 3.11+ (dev: 3.14) + Python stdlib only — `urllib.request`, `urllib.error`, `ssl`, `json`, `tarfile`, `hashlib`, `pathlib`, `shutil`, `os`, `tempfile`, `dataclasses`, `enum`, `logging`, `re`, `argparse`, `platform`, `sys`. (No third-party runtime deps; aligns with constitution §VII "minimal dependencies".) (v0.2.0/spec-002-cli-artifact-install)
+- Local filesystem only. Project lockfile: `<project-root>/aidriven-lock.json`. User lockfile: `~/.cache/aidriven/install-records.json`. Cache: OS user cache directory (`~/.cache/aidriven/cache/` on Linux/macOS, `%LOCALAPPDATA%\aidriven\Cache\` on Windows). (v0.2.0/spec-002-cli-artifact-install)
 
 - Python 3.11+ (dev: 3.14) + None (stdlib only — `pathlib`, `shutil`, `platform`, `subprocess`, `dataclasses`, `enum`, `logging`, `abc`) (v0.1.0/spec-001-ide-discovery)
 
@@ -22,6 +24,7 @@ cd src [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECHNOLO
 Python 3.11+: Follow standard conventions
 
 ## Recent Changes
+- v0.2.0/spec-002-cli-artifact-install: Added Python 3.11+ (dev: 3.14) + Python stdlib only — `urllib.request`, `urllib.error`, `ssl`, `json`, `tarfile`, `hashlib`, `pathlib`, `shutil`, `os`, `tempfile`, `dataclasses`, `enum`, `logging`, `re`, `argparse`, `platform`, `sys`. (No third-party runtime deps; aligns with constitution §VII "minimal dependencies".)
 
 - v0.1.0/spec-001-ide-discovery: Added Python 3.11+ + None (stdlib only — `pathlib`, `shutil`, `platform`, `subprocess`, `dataclasses`, `enum`, `logging`, `abc`)
 

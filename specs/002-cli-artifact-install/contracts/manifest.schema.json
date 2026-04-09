@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/thiagoml/aidriven/specs/002-cli-artifact-install/contracts/manifest.schema.json",
+  "title": "aidriven-resources manifest",
+  "description": "Schema for manifest.json at the root of the aidriven-resources repository (FR-019, FR-022, FR-022a).",
+  "type": "object",
+  "required": ["schemaVersion", "artifacts"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Manifest schema version. Bumped on breaking changes; CLI versions older than the schema MUST refuse to parse."
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional ISO-8601 timestamp; not consumed by the CLI."
+    },
+    "artifacts": {
+      "type": "object",
+      "description": "Artifacts grouped by type. v1 supports only the 'skill' key.",
+      "additionalProperties": false,
+      "properties": {
+        "skill": {
+          "type": "object",
+          "description": "Map of skill name → entry. Keys MUST match the artifact-name regex.",
+          "patternProperties": {
+            "^[a-z][a-z0-9-]{0,63}$": { "$ref": "#/$defs/skillEntry" }
+          },
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "$defs": {
+    "skillEntry": {
+      "type": "object",
+      "required": ["pathInRepo", "archiveSha256", "compatibleTargets"],
+      "additionalProperties": false,
+      "properties": {
+        "pathInRepo": {
+          "type": "string",
+          "description": "Relative path within aidriven-resources to the skill directory (e.g. 'skills/code-reviewer'). Forward slashes only. MUST NOT contain '..' segments.",
+          "pattern": "^[A-Za-z0-9._-]+(/[A-Za-z0-9._-]+)*$"
+        },
+        "archiveSha256": {
+          "type": "string",
+          "description": "Hex SHA-256 of the full repository tarball at the resolved commit SHA. The CLI verifies the downloaded tarball against this value (FR-024).",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "compatibleTargets": {
+          "type": "array",
+          "description": "AI targets the skill officially supports (FR-021). Targets outside this list trigger an incompatibility warning.",
+          "items": { "type": "string", "enum": ["claude", "copilot"] },
+          "uniqueItems": true,
+          "minItems": 1
+        },
+        "description": {
+          "type": "string",
+          "description": "Short human-readable summary, shown in CLI output."
+        }
+      }
+    }
+  }
+}
